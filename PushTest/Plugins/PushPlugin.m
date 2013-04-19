@@ -85,6 +85,32 @@ NSString * notifier = @"apple";
 
 }
 
+-(void)pushNotificationToSelf:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options {
+    NSString * orgName = [options objectForKey:@"orgName"];
+    NSString * appName = [options objectForKey:@"appName"];
+    NSString * baseUrl = @"https://api.usergrid.com/";
+    if([options objectForKey:@"baseUrl"] != nil) {
+        baseUrl = [options objectForKey:@"baseUrl"];
+    }
+    NSLog(@"UG Init");
+    
+    UGClient * usergridClient = [[UGClient alloc] initWithOrganizationId:orgName withApplicationID:appName baseURL:baseUrl];
+    NSString *deviceId = [UGClient getUniqueDeviceID];
+    NSString *thisDevice = [@"devices/" stringByAppendingString: deviceId];
+    NSString *message = @"Hello, world! From Phonegap!";
+    UGClientResponse *response = [usergridClient pushAlert: message
+                                                 withSound: @"chime"
+                                                        to: thisDevice
+                                             usingNotifier: notifier];
+    
+    if (response.transactionState != kUGClientResponseSuccess) {
+        [self failWithMessage:response.rawResponse withError:nil];
+    } else {
+        [self successWithMessage:@"Message pushed"];
+    }
+}
+
+
 - (void)register:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
 {
 	self.callbackId = [arguments pop];

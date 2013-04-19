@@ -20,7 +20,22 @@
     };
  
     PushNotification.prototype.registerTokenWithPushProvier = function(successCallback, options) {
+        if(options.provider === "apigee") {
+            this.appName = options["appName"];
+            this.orgName = options["orgName"];
+            if(options["baseUrl"]) {
+                this.baseUrl = options["baseUrl"];
+            }
+        }
         cordovaRef.exec(successCallback, successCallback, "PushPlugin", "registerWithPushProvider",[options]);
+    };
+ 
+    PushNotification.prototype.pushMessage = function(successCallback) {
+        var options = {"appName":this.appName, "orgName":this.orgName};
+        if(this.baseUrl) {
+            options["baseUrl"] = this.baseUrl;
+        }
+        cordovaRef.exec(successCallback, successCallback, "PushPlugin", "pushNotificationToSelf",[options]);
     };
 
  cordova.addConstructor(function() {

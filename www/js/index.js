@@ -67,6 +67,11 @@ var app = {
         
         pushNotification.register(successHandler,failureHandler,{"badge":"true","sound":"true","alert":"true","ecb":"onNotificationAPN"});
 
+        $("#push").on("click", function(e){
+            //push here
+            pushNotification.pushMessage(function(result){console.log(result);});
+        });
+        
         app.receivedEvent('deviceready');
     },
     // Update DOM on a Received Event
