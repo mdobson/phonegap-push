@@ -34,13 +34,13 @@
 @synthesize callbackId;
 @synthesize notificationCallbackId;
 @synthesize callback;
-@synthesize usergridClient;
 
-NSString * orgName = @"mdobson";
-NSString * appName = @"sandbox";
+
+//NSString * orgName = @"mdobson";
+//NSString * appName = @"sandbox";
 NSString * notifier = @"apple";
 
-NSString * baseURL = @"http://ug-stress.elasticbeanstalk.com/";
+//NSString * baseURL = @"http://ug-stress.elasticbeanstalk.com/";
 
 - (void)dealloc
 {
@@ -59,11 +59,40 @@ NSString * baseURL = @"http://ug-stress.elasticbeanstalk.com/";
     [self successWithMessage:@"unregistered"];
 }
 
+-(void)registerWithPushProvider:(NSMutableArray*)arguments withDict:(NSMutableDictionary *)options {
+    NSLog(@"EQ:%@",[options objectForKey:@"provider"]);
+    self.callbackId = [arguments pop];
+    if([[options objectForKey:@"provider"] isEqualToString:@"apigee"]) {
+        
+        NSString * orgName = [options objectForKey:@"orgName"];
+        NSString * appName = [options objectForKey:@"appName"];
+        NSString * baseUrl = @"https://api.usergrid.com/";
+        if([options objectForKey:@"baseUrl"] != nil) {
+            baseUrl = [options objectForKey:@"baseUrl"];
+        }
+        NSLog(@"UG Init");
+        
+        UGClient * usergridClient = [[UGClient alloc] initWithOrganizationId:orgName withApplicationID:appName baseURL:baseUrl];
+        NSLog(@"Registering for push w/apigee");
+        UGClientResponse *response = [usergridClient setDevicePushToken: [options objectForKey:@"token"] forNotifier: notifier];
+        if (response.transactionState != kUGClientResponseSuccess) {
+            [self failWithMessage:response.rawResponse withError:nil];
+        } else {
+            [self successWithMessage:@"device linked"];
+        }
+        
+    }
+
+}
+
 - (void)register:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options
 {
 	self.callbackId = [arguments pop];
 
     UIRemoteNotificationType notificationTypes = UIRemoteNotificationTypeNone;
+    
+    
+    
     
     if ([[options objectForKey:@"badge"] isEqualToString:@"true"])
         notificationTypes |= UIRemoteNotificationTypeBadge;
@@ -90,13 +119,8 @@ NSString * baseURL = @"http://ug-stress.elasticbeanstalk.com/";
 
 - (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     
-    NSLog(@"Registering for push w/apigee");
-    self.usergridClient = [[UGClient alloc] initWithOrganizationId:orgName withApplicationID:appName baseURL:baseURL];
-    UGClientResponse *response = [self.usergridClient setDevicePushToken: deviceToken forNotifier: notifier];
-
-    if (response.transactionState != kUGClientResponseSuccess) {
-        [self failWithMessage:response.rawResponse withError:nil];
-    }
+    
+    
     
     NSMutableDictionary *results = [NSMutableDictionary dictionary];
     NSString *token = [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<"withString:@""]
@@ -159,6 +183,7 @@ NSString * baseURL = @"http://ug-stress.elasticbeanstalk.com/";
         [results setValue:dev.model forKey:@"deviceModel"];
         [results setValue:dev.systemVersion forKey:@"deviceSystemVersion"];
 
+    
 		[self successWithMessage:[NSString stringWithFormat:@"%@", token]];
     #endif
 }

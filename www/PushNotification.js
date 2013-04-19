@@ -18,6 +18,10 @@
     PushNotification.prototype.setApplicationIconBadgeNumber = function(successCallback, badge) {
         cordovaRef.exec(successCallback, successCallback, "PushPlugin", "setApplicationIconBadgeNumber", [{badge: badge}]);
     };
+ 
+    PushNotification.prototype.registerTokenWithPushProvier = function(successCallback, options) {
+        cordovaRef.exec(successCallback, successCallback, "PushPlugin", "registerWithPushProvider",[options]);
+    };
 
  cordova.addConstructor(function() {
 		if(!window.plugins)

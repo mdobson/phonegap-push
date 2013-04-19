@@ -387,6 +387,11 @@ NSString *g_deviceUUID = nil;
 -(NSMutableString *)createURL:(NSString *)append1 append2:(NSString *)append2
 {
     NSMutableString *ret = [NSMutableString new];
+    //NSLog(@"%@",m_baseURL);
+    //NSLog(@"%@",m_orgID);
+    //NSLog(@"%@",m_appID);
+    NSLog(@"%@",append1);
+    NSLog(@"%@",append2);
     [ret appendFormat:@"%@/%@/%@/%@/%@", m_baseURL, m_orgID, m_appID, append1, append2];
     return ret;
 }

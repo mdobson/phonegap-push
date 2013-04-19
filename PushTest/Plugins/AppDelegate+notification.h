@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "UGClient.h"
 
 @interface AppDelegate (notification)
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;

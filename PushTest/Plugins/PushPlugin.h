@@ -39,7 +39,7 @@
 @property (nonatomic, copy) NSString *callbackId;
 @property (nonatomic, copy) NSString *notificationCallbackId;
 @property (nonatomic, copy) NSString *callback;
-@property (nonatomic, retain) UGClient *usergridClient;
+
 @property (nonatomic, retain) NSDictionary *notificationMessage;
 
 - (void)register:(NSMutableArray *)arguments withDict:(NSMutableDictionary *)options;

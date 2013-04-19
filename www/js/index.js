@@ -33,6 +33,7 @@ function onNotificationAPN(event) {
     }
 }
 
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -51,9 +52,21 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         pushNotification = window.plugins.pushNotification;
-        console.log("Here1");
-        pushNotification.register(function(result){console.log("RESULT:"+result);}, function(error){console.log("ERROR:"+error);},{"badge":"true","sound":"true","alert":"true","ecb":"onNotificationAPN"});
-        console.log("here2");
+
+        function successHandler(result){
+            console.log("RESULT:"+result);
+            var options = {  "provider":"apigee", "orgName":"mdobson", "appName":"sandbox", "baseUrl":"http://ug-stress.elasticbeanstalk.com/", "token":result };
+            pushNotification.registerTokenWithPushProvier(function(result){ console.log(result);}, options);
+            
+        }
+        
+        
+        function failureHandler(error){
+            console.log("ERROR:"+error);
+        }
+        
+        pushNotification.register(successHandler,failureHandler,{"badge":"true","sound":"true","alert":"true","ecb":"onNotificationAPN"});
+
         app.receivedEvent('deviceready');
     },
     // Update DOM on a Received Event
